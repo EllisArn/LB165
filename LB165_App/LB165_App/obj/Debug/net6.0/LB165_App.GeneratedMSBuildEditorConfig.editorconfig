@@ -1,0 +1,10 @@
+is_global = true
+build_property.TargetFramework = net6.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = 
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = LB165_App
+build_property.ProjectDir = c:\Users\ellis\Desktop\OneDrive\!SchuleBBB\M165\ArnEllis_LB_M165_2022-V1\LB165_App\LB165_App\
