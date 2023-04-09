@@ -1,0 +1,104 @@
+// Einfügen eines einzelnen Datensatzes
+db.games.insertOne({
+  appid: 123,
+  name: 'Example Game',
+  short_description: 'Example short description',
+  developer: 'Example Developer',
+  publisher: 'Example Publisher',
+  genre: ['Action', 'Adventure'],
+  tags: ['Action', 'Adventure', 'Indie'],
+  type: 'game',
+  categories: ['Single-player', 'Partial Controller Support'],
+  owners: '200,000 .. 500,000',
+  positive: 100,
+  negative: 20,
+  price: '999',
+  initialprice: '999',
+  discount: '0',
+  ccu: 0,
+  languages: ['English'],
+  platforms: {
+    windows: true,
+    mac: false,
+    linux: false,
+  },
+  release_date: '2020/05/14',
+  required_age: 0,
+  website: '',
+  header_image: 'https://example.com/header.jpg',
+})
+
+// Einfügen mehrerer Datensätze
+db.games.insertMany([
+  {
+    appid: 456,
+    name: 'Example Game 2',
+    short_description: 'Example short description 2',
+    developer: 'Example Developer',
+    publisher: 'Example Publisher',
+    genre: ['Strategy', 'Simulation'],
+    tags: ['Strategy', 'Simulation', 'Indie'],
+    type: 'game',
+    categories: ['Single-player', 'Full Controller Support'],
+    owners: '100,000 .. 200,000',
+    positive: 200,
+    negative: 40,
+    price: '1999',
+    initialprice: '1999',
+    discount: '0',
+    ccu: 0,
+    languages: ['English', 'German'],
+    platforms: {
+      windows: true,
+      mac: true,
+      linux: false,
+    },
+    release_date: '2020/06/10',
+    required_age: 0,
+    website: '',
+    header_image: 'https://example.com/header2.jpg',
+  },
+  {
+    appid: 789,
+    name: 'Example Game 3',
+    short_description: 'Example short description 3',
+    developer: 'Example Developer 2',
+    publisher: 'Example Publisher 2',
+    genre: ['RPG', 'Adventure'],
+    tags: ['RPG', 'Adventure', 'Indie'],
+    type: 'game',
+    categories: ['Single-player', 'Steam Achievements'],
+    owners: '50,000 .. 100,000',
+    positive: 300,
+    negative: 60,
+    price: '2999',
+    initialprice: '2999',
+    discount: '0',
+    ccu: 0,
+    languages: ['English', 'French'],
+    platforms: {
+      windows: true,
+      mac: true,
+      linux: true,
+    },
+    release_date: '2020/07/05',
+    required_age: 0,
+    website: '',
+    header_image: 'https://example.com/header3.jpg',
+  },
+])
+
+// Aktualisieren eines einzelnen Datensatzes
+db.games.updateOne({ appid: 123 }, { $set: { price: 799 } })
+
+// Aktualisieren mehrerer Datensätze
+db.games.updateMany(
+  { developer: 'Example Developer' },
+  { $set: { publisher: 'New Publisher' } }
+)
+
+// Löschen eines einzelnen Datensatzes
+db.games.deleteOne({ appid: 789 })
+
+// Löschen mehrerer Datensätze
+db.games.deleteMany({ developer: 'Example Developer' })

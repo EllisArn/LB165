@@ -1,0 +1,103 @@
+// Selektion und Projektion
+
+// Finde alle Spiele, die von "Valve" entwickelt wurden, sortiert nach Erscheinungsdatum, und gib nur den Namen und das Erscheinungsdatum zurück
+db.games
+  .find({ developer: 'Valve' }, { name: 1, release_date: 1 })
+  .sort({ release_date: 1 })
+
+// Finde alle Spiele, die im Jahr 2020 veröffentlicht wurden, sortiert nach Genre, und gib nur den Namen und das Genre zurück
+db.games
+  .find({ release_date: { $regex: '^2020' } }, { name: 1, genre: 1 })
+  .sort({ genre: 1 })
+
+// Finde alle Spiele mit dem Tag "Multiplayer", sortiert nach Anzahl der Plattformen, und gib nur den Namen und die Plattformen zurück
+db.games
+  .find({ tags: 'Multiplayer' }, { name: 1, platforms: 1 })
+  .sort({ 'platforms.windows': -1, 'platforms.mac': -1, 'platforms.linux': -1 })
+
+// Finde alle Spiele, die auf Windows und Linux verfügbar sind, sortiert nach Preis, und gib nur den Namen und den Preis zurück
+db.games
+  .find(
+    { 'platforms.windows': true, 'platforms.linux': true },
+    { name: 1, price: 1 }
+  )
+  .sort({ price: 1 })
+
+// Finde alle Spiele, die von "SEGA" entwickelt wurden und mehr als 100 positive Bewertungen haben, sortiert nach Anzahl der positiven Bewertungen, und gib nur den Namen und die Anzahl der positiven Bewertungen zurück
+db.games
+  .find({ developer: 'SEGA', positive: { $gt: 100 } }, { name: 1, positive: 1 })
+  .sort({ positive: -1 })
+
+// Finde alle Spiele, die mindestens 50 % Rabatt haben, sortiert nach Rabatt, und gib nur den Namen, den ursprünglichen Preis und den Rabatt zurück
+db.games
+  .find({ discount: { $gte: '50' } }, { name: 1, initialprice: 1, discount: 1 })
+  .sort({ discount: -1 })
+
+// Aggregation
+
+// Finde für jeden «Tag» den durchschnittlichen Preis und gib den Namen des Tags und den Durchschnittspreis zurück
+db.games.aggregate([
+  { $match: { price: { $ne: '0' }, tags: { $ne: [] } } },
+  { $unwind: '$tags' },
+  {
+    $group: {
+      _id: '$tags',
+      averagePrice: { $avg: { $toDouble: '$price' } },
+    },
+  },
+  {
+    $project: {
+      tag: '$_id',
+      averagePrice: {
+        $divide: [
+          {
+            $multiply: [{ $round: [{ $divide: ['$averagePrice', 5] }] }, 5],
+          },
+          100,
+        ],
+      },
+      _id: 0,
+    },
+  },
+  { $sort: { tag: 1 } },
+])
+
+// Finde die durchschnittlichen positiven Bewertungen für Spiele, die im Jahr 2021 veröffentlicht wurden
+db.games.aggregate([
+  { $match: { release_date: { $regex: '^2021' } } },
+  { $group: { _id: null, avg_positive: { $avg: '$positive' } } },
+])
+
+// Zähle die Anzahl der Spiele für jedes Genre
+db.games.aggregate([
+  { $unwind: '$genre' },
+  { $group: { _id: '$genre', count: { $sum: 1 } } },
+])
+
+// Finde die 5 am häufigsten verwendeten Tags in den Spielen
+db.games.aggregate([
+  { $unwind: '$tags' },
+  { $group: { _id: '$tags', count: { $sum: 1 } } },
+  { $sort: { count: -1 } },
+  { $limit: 5 },
+])
+
+// Berechne den durchschnittlichen Preis für Spiele, die von "Valve" entwickelt wurden
+db.games.aggregate([
+  { $match: { developer: 'Valve' } },
+  { $group: { _id: null, avg_price: { $avg: '$price' } } },
+])
+
+// Finde die Anzahl der Spiele für jede Plattform (Windows, Mac, Linux)
+db.games.aggregate([
+  {
+    $group: {
+      _id: null,
+      windows: {
+        $sum: { $cond: [{ $eq: ['$platforms.windows', true] }, 1, 0] },
+      },
+      mac: { $sum: { $cond: [{ $eq: ['$platforms.mac', true] }, 1, 0] } },
+      linux: { $sum: { $cond: [{ $eq: ['$platforms.linux', true] }, 1, 0] } },
+    },
+  },
+])

@@ -1,0 +1,40 @@
+// Rollen erstellen
+use('LB165')
+
+// Rolle gameViewer
+db.createRole({
+  role: 'gameViewer',
+  privileges: [
+    { resource: { db: 'LB165', collection: 'games' }, actions: ['find'] },
+  ],
+  roles: [],
+})
+
+// Rolle gameManager
+db.createRole({
+  role: 'gameManager',
+  privileges: [
+    {
+      resource: { db: 'LB165', collection: 'games' },
+      actions: ['find', 'insert', 'update', 'remove'],
+    },
+  ],
+  roles: [],
+})
+
+// Benutzer erstellen
+use('LB165')
+
+// Benutzer mit der Rolle gameViewer
+db.createUser({
+  user: 'viewerUser',
+  pwd: 'viewerPassword',
+  roles: [{ role: 'gameViewer', db: 'LB165' }],
+})
+
+// Benutzer mit der Rolle gameManager
+db.createUser({
+  user: 'managerUser',
+  pwd: 'managerPassword',
+  roles: [{ role: 'gameManager', db: 'LB165' }],
+})
